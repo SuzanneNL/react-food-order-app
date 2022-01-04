@@ -5,5 +5,5 @@
 
 <br></br>
 ### Previews of the app:
-![Preview1 of the app](documentation/preview1.PNG)
-![Preview2 of the app](documentation/preview2.PNG)
+![Preview1 of the app](documentation/preview1.png)
+![Preview2 of the app](documentation/preview2.png)
