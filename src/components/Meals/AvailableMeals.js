@@ -1,39 +1,40 @@
 // This brings the list of meals to the screen
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Card from "../UI/Card";
 import MealItem from "./MealItem/MealItem";
 import classes from "./AvailableMeals.module.css";
 
-const DUMMY_MEALS = [
-  {
-    id: "m1",
-    name: "Sushi",
-    description: "Finest fish and veggies",
-    price: 22.99,
-  },
-  {
-    id: "m2",
-    name: "Schnitzel",
-    description: "A german specialty!",
-    price: 16.5,
-  },
-  {
-    id: "m3",
-    name: "Barbecue Burger",
-    description: "American, raw, meaty",
-    price: 12.99,
-  },
-  {
-    id: "m4",
-    name: "Green Bowl",
-    description: "Healthy...and green...",
-    price: 18.99,
-  },
-];
+const { REACT_APP_FB_URL } = process.env;
 
 const AvailableMeals = () => {
-  const mealsList = DUMMY_MEALS.map((meal) => (
+  const [meals, setMeals] = useState([]);
+
+  useEffect(() => {
+    // The function passed to useEffect should not return a promise, it must not be turned into an async function.
+    // Therefore I write a separate async fetchMeals function, which I execute as part of useEffect.
+    const fetchMeals = async () => {
+      const response = await fetch(`${REACT_APP_FB_URL}meals.json`);
+      // Parse data:
+      const responseData = await response.json();
+      // The values for the meal keys are nested properties. So responseData is an object, which I then transform into an array:
+      const loadedMeals = [];
+      for (const key in responseData) {
+        loadedMeals.push({
+          id: key,
+          name: responseData[key].name,
+          description: responseData[key].description,
+          price: responseData[key].price,
+        });
+      }
+
+      setMeals(loadedMeals);
+    };
+
+    fetchMeals();
+  }, []);
+
+  const mealsList = meals.map((meal) => (
     <MealItem
       id={meal.id}
       key={meal.id}
@@ -42,6 +43,7 @@ const AvailableMeals = () => {
       price={meal.price}
     />
   ));
+
   return (
     <section className={classes.meals}>
       <Card>
