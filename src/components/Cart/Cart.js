@@ -6,6 +6,8 @@ import CartItem from "./CartItem";
 import CartContext from "../../store/cart-context";
 import Checkout from "./Checkout";
 
+const { REACT_APP_FB_URL } = process.env;
+
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
   const cartCtx = useContext(CartContext);
@@ -23,6 +25,16 @@ const Cart = (props) => {
 
   const orderHandler = () => {
     setIsCheckout(true);
+  };
+
+  const submitOrderHandler = (userData) => {
+    fetch(`${REACT_APP_FB_URL}orders.json`, {
+      method: "POST",
+      body: JSON.stringify({
+        user: userData,
+        orderedItems: cartCtx.items,
+      }),
+    });
   };
 
   const cartItems = (
@@ -60,7 +72,9 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onHideCart} />}
+      {isCheckout && (
+        <Checkout onCancel={props.onHideCart} onConfirm={submitOrderHandler} />
+      )}
       {!isCheckout && modalActions}
     </Modal>
   );
