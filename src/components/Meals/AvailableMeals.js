@@ -9,6 +9,8 @@ const { REACT_APP_FB_URL } = process.env;
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
+  // We always start with loading data when the component is rendered, therefore we set this to true:
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // The function passed to useEffect should not return a promise, it must not be turned into an async function.
@@ -29,10 +31,19 @@ const AvailableMeals = () => {
       }
 
       setMeals(loadedMeals);
+      setIsLoading(false);
     };
 
     fetchMeals();
   }, []);
+
+  if (isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <p>Loading...</p>
+      </section>
+    );
+  }
 
   const mealsList = meals.map((meal) => (
     <MealItem
